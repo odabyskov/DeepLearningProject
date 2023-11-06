@@ -5,7 +5,7 @@
 ### -- set the job Name --
 #BSUB -J testjob
 ### -- ask for number of cores (default: 1) --
-#BSUB -n 1
+#BSUB -n 4
 ### -- Select the resources: 1 gpu in exclusive process mode --
 #BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
@@ -26,13 +26,7 @@
 #BSUB -e gpu_%J.err
 # -- end of LSF options --
 
-nvidia-smi
-# Load the cuda module
-module load cuda/11.6
-
-/appl/cuda/11.6.0/samples/bin/x86_64/linux/release/deviceQuery
-
-# Activate the virtual environment and execute your Python script
+# Activate the modules and execute your Python script
 # This is the path, if you execute the .sh from the folder where they are located
-source ./venv/bin/activate
-python ./your_script.py
+module load python3/3.10.12
+python3 ./your_script.py
