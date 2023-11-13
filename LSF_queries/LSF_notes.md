@@ -18,7 +18,7 @@ mkdir FOLDER_NAME
 ```     
 4. Load a python module, e.g.:
 ```
-module load python/3.10.12
+module load python3/3.10.12
 ```  
 Use ```module avail``` to see all available modules and ```module list``` to see your modules.
         
