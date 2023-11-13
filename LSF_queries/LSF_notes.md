@@ -45,6 +45,7 @@ More settings, like e.g. your mail address (defaul job updates are sent to your 
 scp -r PATH_TO_FOLDER studentID@login.hpc.dtu.dk:~/PATH_TO_FOLDER 
 ``` 
 E.g., ```scp -r ~/test_folder s183700@login.hpc.dtu.dk:~/scripts/test```. To copy a single file, use: ```scp test_job.sh studentID@login.hpc.dtu.dk:~/folderName``` from the folder where the file is located (or add the path).
+
 3. Navigate to the folder on the HPC  and run the .sh script using:
 ```
 bsub < SCRIPT_NAME.sh
