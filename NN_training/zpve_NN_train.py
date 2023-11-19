@@ -16,23 +16,32 @@ qm9tut = './qm9tut'
 if not os.path.exists('qm9tut'):
     os.makedirs(qm9tut)
 
-################ Property #################
-PROPERTY = QM9.zpve
+################ Parameters #################
+PROPERTY = QM9.lumo
+BATCH_SIZE = 16
+CUTOFF = 5.
+LR = 1e-4
+NUM_WORKERS = 4
+NUM_ATOM_BASIS = 32
+EPOCHS = 50
+NUM_TRAIN = 110000
+NUM_VALIDATION = 10000
+T_ITERATIONS = 3
 
 ################ Load QM9 database ################
 qm9data = QM9(
     #qm9db = os.path.join(os.getcwd(), '/qm9.db'),
     './qm9.db',
-    batch_size=100,
-    num_train=110000,
-    num_val=10000,
+    batch_size=BATCH_SIZE,
+    num_train=NUM_TRAIN,
+    num_val=NUM_VALIDATION,
     transforms=[
-        trn.ASENeighborList(cutoff=5.),
-        trn.RemoveOffsets(PROPERTY, remove_mean=True, remove_atomrefs=True),
+        trn.ASENeighborList(cutoff=CUTOFF),
+        # trn.RemoveOffsets(PROPERTY, remove_mean=True, remove_atomrefs=True),
         trn.CastTo32()
     ],
     #property_units={QM9.U0: 'eV'},
-    num_workers=4,
+    num_workers=NUM_WORKERS,
     split_file=os.path.join(qm9tut, "split.npz"),
     pin_memory=False, # set to false, when not using a GPU
     load_properties=[PROPERTY], # load relevant properties
@@ -41,13 +50,13 @@ qm9data.prepare_data()
 qm9data.setup()
 
 #################### model ####################
-cutoff = 5.
-n_atom_basis = 30
+cutoff = CUTOFF
+n_atom_basis = NUM_ATOM_BASIS
 
 pairwise_distance = spk.atomistic.PairwiseDistances() # calculates pairwise distances between atoms
 radial_basis = spk.nn.GaussianRBF(n_rbf=20, cutoff=cutoff)
 schnet = spk.representation.SchNet(
-    n_atom_basis=n_atom_basis, n_interactions=3,
+    n_atom_basis=n_atom_basis, n_interactions=T_ITERATIONS,
     radial_basis=radial_basis,
     cutoff_fn=spk.nn.CosineCutoff(cutoff)
 )
@@ -58,7 +67,8 @@ nnpot = spk.model.NeuralNetworkPotential(
     representation=schnet,
     input_modules=[pairwise_distance],
     output_modules=[pred_property],
-    postprocessors=[trn.CastTo64(), trn.AddOffsets(PROPERTY, add_mean=True, add_atomrefs=True)]
+    # postprocessors=[trn.CastTo64(), trn.AddOffsets(PROPERTY, add_mean=True, add_atomrefs=True)]
+    postprocessors=[trn.CastTo64()]
 )
 
 ############## Output ##############
@@ -76,7 +86,7 @@ task = spk.task.AtomisticTask(
     model=nnpot,
     outputs=[output_property],
     optimizer_cls=torch.optim.AdamW,
-    optimizer_args={"lr": 1e-4}
+    optimizer_args={"lr": LR}
 )
 
 
@@ -94,7 +104,7 @@ trainer = pl.Trainer(
     callbacks=callbacks,
     logger=logger,
     default_root_dir=qm9tut,
-    max_epochs=3, # for testing, we restrict the number of epochs
+    max_epochs=EPOCHS, # for testing, we restrict the number of epochs
 )
 print('Start training')
 trainer.fit(task, datamodule=qm9data)
