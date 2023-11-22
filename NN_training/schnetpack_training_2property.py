@@ -29,6 +29,8 @@ NUM_TRAIN = 110000
 NUM_VALIDATION = 10000
 T_ITERATIONS = 3
 
+torch.manual_seed(0)
+
 ################ Load QM9 database ################
 qm9data = QM9(
     #qm9db = os.path.join(os.getcwd(), '/qm9.db'),
