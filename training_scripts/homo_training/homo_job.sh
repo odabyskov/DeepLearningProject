@@ -3,9 +3,9 @@
 ### –- specify queue --
 #BSUB -q gpuv100
 ### -- set the job Name --
-#BSUB -J Cv_100_EPOCHS
+#BSUB -J homo
 ### -- ask for number of cores (default: 1) --
-#BSUB -n 4
+#BSUB -n 8
 ### -- Select the resources: 1 gpu in exclusive process mode --
 #BSUB -gpu "num=1:mode=exclusive_process"
 ### -- set walltime limit: hh:mm --  maximum 24 hours for GPU-queues right now
@@ -29,4 +29,4 @@
 # Activate the modules and execute your Python script
 # This is the path, if you execute the .sh from the folder where they are located
 module load python3/3.10.12
-python3 ./CV_100_epochs.py
+python3 ./homo_train.py
