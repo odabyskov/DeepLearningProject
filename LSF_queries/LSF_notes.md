@@ -57,7 +57,7 @@ bstat
 ```
 scp studentID@login.hpc.dtu.dk:~/HPC_PATH LOCAL_PATH
 ```
-E.g., ```scp s183700@login.hpc.dtu.dk:~/scripts/test/test_job.sh ~/Downloads```.
+E.g., ```scp s183700@login.hpc.dtu.dk:~/scripts/test/test_job.sh ~/Downloads``` or for a whole folder ```scp -r s183700@login.hpc.dtu.dk:~/scripts/training_scripts/homo_training/qm9tut ~/Downloads```.
 
 ### GOOD-2-KNOWS:
 * Remove non-empty folder using:  
