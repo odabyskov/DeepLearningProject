@@ -5,6 +5,9 @@ from schnetpack.datasets import QM9
 import numpy as np
 from ase import Atoms
 import schnetpack as spk
+import pickle
+import os
+import pickle
 
 
 class QM9DataHandler:
@@ -12,6 +15,7 @@ class QM9DataHandler:
     C = 6
     N = 7
     O = 8
+    SAVE_DIR = os.path.join(os.getcwd(), "data")
 
     def __init__(self, qm9data: QM9, cutoff: float = 5.0):
         self.qm9data = qm9data
@@ -139,11 +143,12 @@ class QM9DataHandler:
                 pred, digest = self._get_embedding_digest(model, inputs)
 
                 try:
-                    predictions[idx] = np.array([
-                        pred[prop].item() for prop in self.properties
-                        ])
-                except KeyError:
-                    raise RuntimeError("The provided model does not output the requested properties.")
+                    predictions[idx] = np.array(
+                        [pred[prop].item() if prop in pred else None for prop in self.properties]
+                    )
+                except Exception:
+                    raise ValueError("Model does not output the requested properties.")
+                    
 
                 embeddings[idx] = np.array(digest).squeeze()
 
@@ -162,12 +167,39 @@ class QM9DataHandler:
         """
         self.isolate_atom = atom_number
 
+    def save(self, model_name: str = None):
+        """
+        Saves the acquired data to a pickle file.
+        """
+        data = np.array([None] * len(self))
+        for idx, molecule in enumerate(self):
+            data[idx] = molecule
+
+        if not os.path.exists(self.SAVE_DIR):
+            os.makedirs(self.SAVE_DIR)
+
+        if model_name is not None:
+            filename = f"outputs_{model_name}.pkl"
+        else:
+            filename = f"outputs.pkl"
+        filepath = os.path.join(self.SAVE_DIR, filename)
+        index = 1
+        while os.path.exists(filepath):
+            if model_name is not None:
+                filename = f"outputs_{model_name}({index}).pkl"
+            else:
+                filename = f"outputs_{index}.pkl"
+            filepath = os.path.join(self.SAVE_DIR, filename)
+            index += 1
+
+        with open(filepath, "wb") as f:
+            pickle.dump(data, f)
+
     def _get_embedding_digest(
         self,
         model: spk.model.NeuralNetworkPotential,
         inputs: spk.interfaces.AtomsConverter,
     ) -> Union[torch.Tensor, List[np.ndarray]]:
-        
         digest = []
 
         def hook_callback(module, input: torch.Tensor, output):
@@ -179,7 +211,7 @@ class QM9DataHandler:
 
         model.eval()
         pred = model(inputs)
-        
+
         # in case of multiple outputs, we need to cast the tuple to a dict
         if isinstance(pred, tuple):
             pred = {k: v for k, v in pred}
