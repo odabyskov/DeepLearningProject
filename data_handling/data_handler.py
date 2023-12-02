@@ -144,12 +144,11 @@ class QM9DataHandler:
 
                 try:
                     predictions[idx] = np.array(
-                        [pred[prop].item() for prop in self.properties]
+                        [pred[prop].item() if prop in pred else None for prop in self.properties]
                     )
-                except KeyError:
-                    raise RuntimeError(
-                        "The provided model does not output the requested properties."
-                    )
+                except Exception:
+                    raise ValueError("Model does not output the requested properties.")
+                    
 
                 embeddings[idx] = np.array(digest).squeeze()
 
@@ -168,7 +167,7 @@ class QM9DataHandler:
         """
         self.isolate_atom = atom_number
 
-    def save_outputs(self, model_name: str = None):
+    def save(self, model_name: str = None):
         """
         Saves the acquired data to a pickle file.
         """
