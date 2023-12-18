@@ -1,7 +1,7 @@
 # DeepLearningProject
 This repository contains the final project of the DTU course 02456 Deep Learning Fall 2023. The project was carried out by Aimas Lund (s174435), Emma Christine Lei Hovmand (s194062) and Oda Byskov Aggerholm (s183700). 
 
-As the project contains 14 trained models, it has not been possible to create a single notebook recreating the results of the work. Instead, seperate scripts for each model can be found.
+As the project contains 14 trained models, it has not been possible to create a single notebook recreating the results of the work. Instead, seperate scripts for each model as well as data processing can be found.
 
 This repositories contains five main folders:
 1. `LSF_queries`: Containing a markdown description of how to use the HPC at DTU along with a template shell script for an HPC job.
