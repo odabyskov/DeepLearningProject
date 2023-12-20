@@ -1,9 +1,9 @@
 # DeepLearningProject
 This repository contains the final project of the DTU course 02456 Deep Learning Fall 2023. The project was carried out by Aimas Lund (s174435), Emma Christine Lei Hovmand (s194062) and Oda Byskov Aggerholm (s183700). 
 
-As the project contains 14 trained models, it has not been possible to create a single notebook recreating the results of the work. Instead, seperate scripts for each model as well as data processing can be found.
+As the project contains 14 trained models, it has not been possible to create a single notebook recreating the results of the work. Instead, separate scripts for each model training as well as data processing type can be found.
 
-This repositories contains five main folders:
+This repositories contains four main folders:
 1. `LSF_queries`: Containing a markdown description of how to use the HPC at DTU along with a template shell script for an HPC job.
 2. `data_handling`: Containing the file `data_handler.py` with a datahandler class defined that can be used for fetching relevant data from the database it is initialized with.
 3. `model_training`: Containing all 14 training scripts for the models.
@@ -25,14 +25,14 @@ All models have been trained using `python 3.10.12`.
 ## 2. Data Handling
 Along with the `QM9DataHandler` class, this folder contains all trained models in the folder `models` and a folder `data` that contains the validation data for each model in pickle file format.
 
-The `QM9DataHandler` is initialized with qm9 data. It works like an iterable and returns all relevant data in `dict` format. The `dict` contains the following keys:
+The `QM9DataHandler` is initialized with QM9 data. It works like an iterable and returns all relevant data in `dict` format. The `dict` contains the following keys:
 
 * `positions`: The positions of the atoms in the molecule.
 * `atom_numbers`: The atomic numbers in sequence in the given molecule.
 * `atom_mask`: A mask to indicate the positions of the chosen atom in the molecule.
 * `properties`: The property values of the molecule.
 
-When data is fetch, you can parse a trained model to the `fetch_model_output` function. This will return the output of the model for the given data. The output will update the previous dict, such that it will contain the following keys:
+When data is fetch, you can parse a trained model to the `fetch_model_output` function. This will return the output of the model for the given data. The output will update the previous `dict`, such that it will contain the following keys:
 
 * `positions`: The positions of the atoms in the molecule.
 * `atom_numbers`: The atomic numbers in sequence in the given molecule.
